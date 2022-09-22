@@ -1,12 +1,23 @@
+const root = document.querySelector("#root");
+
+const gameDiv = document.createElement("div");
+root.appendChild(gameDiv);
+
+const finalResultDiv = document.createElement("div");
+root.appendChild(finalResultDiv);
+
+const title = document.createElement("h1");
+title.textContent = "Choose between:"
+gameDiv.appendChild(title);
+
+let choices = ["Rock", "Paper", "Scissor"];
 const getComputerChoice = () => {
-  let choice = ["Rock", "Paper", "Scissor"];
-  return choice[Math.floor(Math.random() * choice.length)]
+  return choices[Math.floor(Math.random() * choices.length)]
 }
 
 const playRound = (playerSelection, computerSelection) => {
   let playerChoice = playerSelection.toLowerCase();
   let computerChoice = computerSelection.toLowerCase();
-  console.log(playerChoice, computerChoice);
   if (playerChoice === computerChoice) {
     return "Tie";
   } else {
@@ -32,11 +43,50 @@ const playRound = (playerSelection, computerSelection) => {
   }
 }
 
-const game = () => {
-  for (let i = 0; i < 5; i++) {
-    let playerSelection = prompt("Enter Your Choice b/w Rock Paper and Scissor")
-    console.log(playRound(playerSelection, getComputerChoice()));
-  }
+for (let i = 0; i < choices.length; i++) {
+  const button = document.createElement("button");
+  button.textContent = choices[i];
+  gameDiv.appendChild(button);
 }
 
-game();
+const resultField = document.createElement("p");
+const finalResult = document.createElement("p");
+gameDiv.appendChild(resultField);
+finalResultDiv.appendChild(finalResult);
+
+let win = 0, lose = 0, count = 0;
+const setCount = () => {
+  count++;
+  if (count === 5) {
+    gameDiv.style.display = "none";
+  }
+}
+const buttons = document.querySelectorAll("button");
+buttons.forEach((button) => {
+  button.addEventListener("click", (event) => {
+    let result = playRound(event.target.textContent, getComputerChoice());
+    resultField.textContent = result;
+    if (result.match(/Win/)) {
+      resultField.style.color = "green";
+      win++;
+    } else if (result.match(/Lose/)) {
+      resultField.style.color = "red";
+      lose++;
+    } else {
+      resultField.style.color = "blue";
+    }
+    setCount();
+    if (count === 5) {
+      if (win > lose) {
+        finalResult.textContent = "You beat the computer";
+        finalResult.style.color = "green";
+      } else if (lose > win) {
+        finalResult.textContent = "Better Luck next time!";
+        finalResult.style.color = "red";
+      } else {
+        finalResult.textContent = "It's Tie!";
+        finalResult.style.color = "blue";
+      }
+    }
+  })
+})
